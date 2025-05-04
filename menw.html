@@ -1,0 +1,240 @@
+<?php
+// Database connection
+$servername = "localhost";
+$username = "root"; // default XAMPP username
+$password = "";     // default XAMPP password
+$dbname = "mycase1"; // change to your database name
+
+// Create connection
+$conn = new mysqli($servername, $username, $password, $dbname);
+
+// Check connection
+if ($conn->connect_error) {
+    die("Connection failed: " . $conn->connect_error);
+}
+
+// Query to get menu items
+$sql = "SELECT `name EG`, `name AR`, price FROM namemenu";
+$result = $conn->query($sql);
+?>
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Coffee Shop Menu</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root {
+            --coffee-brown: #6F4E37;
+            --coffee-light: #C4A484;
+            --cream: #F5F5DC;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--cream);
+            margin: 0;
+            padding: 0;
+            color: #333;
+        }
+        
+        .header {
+            background-color: var(--coffee-brown);
+            color: white;
+            padding: 20px 0;
+            text-align: center;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        
+        .header h1 {
+            margin: 0;
+            font-size: 2.5rem;
+        }
+        
+        .header p {
+            margin: 10px 0 0;
+            font-style: italic;
+        }
+        
+        .container {
+            max-width: 1000px;
+            margin: 30px auto;
+            padding: 20px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 0 15px rgba(0,0,0,0.1);
+        }
+        
+        .menu-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid var(--coffee-light);
+        }
+        
+        .search-box {
+            padding: 8px 15px;
+            border: 1px solid #ddd;
+            border-radius: 20px;
+            width: 300px;
+            font-size: 16px;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        
+        th, td {
+            padding: 15px;
+            text-align: left;
+            border-bottom: 1px solid #eee;
+        }
+        
+        th {
+            background-color: var(--coffee-brown);
+            color: white;
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 0.9rem;
+            letter-spacing: 1px;
+        }
+        
+        tr:hover {
+            background-color: rgba(196, 164, 132, 0.1);
+        }
+        
+        .arabic {
+            text-align: right;
+            direction: rtl;
+            font-family: 'Traditional Arabic', 'Arial Unicode MS', sans-serif;
+            font-size: 1.1rem;
+        }
+        
+        .price {
+            text-align: center;
+            font-weight: bold;
+            color: var(--coffee-brown);
+        }
+        
+        .footer {
+            text-align: center;
+            margin-top: 30px;
+            padding: 20px;
+            color: #666;
+            font-size: 0.9rem;
+        }
+        
+        .social-icons {
+            margin-top: 10px;
+        }
+        
+        .social-icons a {
+            color: var(--coffee-brown);
+            margin: 0 10px;
+            font-size: 1.2rem;
+            transition: color 0.3s;
+        }
+        
+        .social-icons a:hover {
+            color: var(--coffee-light);
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                padding: 15px;
+            }
+            
+            .menu-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            
+            .search-box {
+                width: 100%;
+                margin-top: 10px;
+            }
+            
+            th, td {
+                padding: 10px 5px;
+                font-size: 0.9rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Kurdish Coffee House</h1>
+        <p>Traditional Taste, Modern Experience</p>
+    </div>
+    
+    <div class="container">
+        <div class="menu-header">
+            <h2>Our Menu</h2>
+            <input type="text" class="search-box" placeholder="Search menu items..." id="searchInput">
+        </div>
+        
+        <?php if ($result->num_rows > 0): ?>
+            <table id="menuTable">
+                <thead>
+                    <tr>
+                        <th>English Name</th>
+                        <th>Arabic/Kurdish Name</th>
+                        <th>Price (IQD)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php while($row = $result->fetch_assoc()): ?>
+                        <tr>
+                            <td><?php echo htmlspecialchars($row['name EG']); ?></td>
+                            <td class="arabic"><?php echo htmlspecialchars($row['name AR']); ?></td>
+                            <td class="price"><?php echo number_format($row['price']); ?></td>
+                        </tr>
+                    <?php endwhile; ?>
+                </tbody>
+            </table>
+        <?php else: ?>
+            <p style="text-align: center; padding: 20px;">No menu items found in the database.</p>
+        <?php endif; ?>
+    </div>
+    
+    <div class="footer">
+        <p>© <?php echo date('Y'); ?> Kurdish Coffee House. All rights reserved.</p>
+        <p>Open daily from 8:00 AM to 11:00 PM</p>
+        <div class="social-icons">
+            <a href="#"><i class="fab fa-facebook"></i></a>
+            <a href="#"><i class="fab fa-instagram"></i></a>
+            <a href="#"><i class="fab fa-twitter"></i></a>
+            <a href="#"><i class="fab fa-whatsapp"></i></a>
+        </div>
+    </div>
+
+    <script>
+        // Simple search functionality
+        document.getElementById('searchInput').addEventListener('keyup', function() {
+            const input = this.value.toLowerCase();
+            const rows = document.querySelectorAll('#menuTable tbody tr');
+            
+            rows.forEach(row => {
+                const englishName = row.cells[0].textContent.toLowerCase();
+                const arabicName = row.cells[1].textContent.toLowerCase();
+                
+                if (englishName.includes(input) || arabicName.includes(input)) {
+                    row.style.display = '';
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+        });
+    </script>
+</body>
+</html>
+
+<?php
+$conn->close();
+?>
